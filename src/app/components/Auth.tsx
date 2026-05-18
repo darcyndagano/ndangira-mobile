@@ -58,8 +58,8 @@ export function Auth() {
       });
       return res.data;
     },
-    onSuccess: (data) => {
-      handleAuthSuccess(data);
+    onSuccess: (responseData) => {
+      handleAuthSuccess(responseData.data);
     },
     onError: (err: any) => {
       const errMsg = err.response?.data?.detail || "Téléphone ou mot de passe incorrect.";

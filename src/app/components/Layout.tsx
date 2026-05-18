@@ -1,16 +1,21 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { Home, Search, Heart, User } from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
 
 export function Layout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
 
   const navItems = [
     { path: "/home", icon: Home, label: "Accueil" },
     { path: "/home/search", icon: Search, label: "Recherche" },
     { path: "/home/favorites", icon: Heart, label: "Favoris" },
-    { path: "/home/profile", icon: User, label: "Profil" },
   ];
+
+  if (isAuthenticated) {
+    navItems.push({ path: "/home/profile", icon: User, label: "Profil" });
+  }
 
   // Only show the bottom navigation bar on the 4 main tab pages
   const mainTabs = ["/home", "/home/search", "/home/favorites", "/home/profile"];

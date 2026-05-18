@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { User as UserIcon, Home, TrendingUp, Settings, LogOut, Users } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
@@ -5,12 +6,14 @@ import { toast } from "sonner";
 
 export function Profile() {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
 
-  const handleLogout = () => {
+  const handleConfirmLogout = () => {
     logout();
     toast.success("Vous avez été déconnecté.");
+    setShowLogoutModal(false);
     navigate("/home");
   };
 
@@ -28,7 +31,7 @@ export function Profile() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5]">
+    <div className="min-h-screen bg-[#FAF8F5] relative">
       {/* User Header Profile */}
       <div className="bg-[#2C1810] px-4 py-8 pb-12">
         <div className="flex flex-col items-center">
@@ -75,7 +78,7 @@ export function Profile() {
 
         {user && (
           <button
-            onClick={handleLogout}
+            onClick={() => setShowLogoutModal(true)}
             className="w-full flex items-center justify-center gap-2 bg-white text-red-500 py-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow cursor-pointer font-semibold text-xs border border-[#2C1810]/5"
           >
             <LogOut className="w-5 h-5" />
@@ -83,6 +86,35 @@ export function Profile() {
           </button>
         )}
       </div>
+
+      {/* Custom Logout Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl animate-in fade-in zoom-in duration-200">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <LogOut className="w-6 h-6 text-red-500" />
+            </div>
+            <h3 className="text-center text-lg font-bold text-[#2C1810] mb-2">Déconnexion</h3>
+            <p className="text-center text-sm text-[#2C1810]/60 mb-6">
+              Êtes-vous sûr de vouloir vous déconnecter ?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 py-3.5 rounded-xl font-semibold text-sm bg-[#F0EDE8] text-[#2C1810] hover:bg-[#E5E0D8] transition-colors cursor-pointer"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleConfirmLogout}
+                className="flex-1 py-3.5 rounded-xl font-semibold text-sm bg-red-500 text-white shadow-lg shadow-red-500/30 hover:bg-red-600 transition-colors cursor-pointer"
+              >
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
