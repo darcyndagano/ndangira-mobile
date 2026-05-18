@@ -1,5 +1,11 @@
 {
   "appId": "com.ndangira.app",
-  "appName": "ndangira",
-  "webDir": "dist"
+  "appName": "Ndangira",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true
+    }
+  }
 }
