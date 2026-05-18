@@ -53,13 +53,13 @@ export function Settings() {
         </div>
 
         {/* Logout action */}
-        <button
+        {/* <button
           onClick={() => setShowLogoutModal(true)}
           className="w-full flex items-center justify-center gap-2 bg-white text-red-500 py-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow cursor-pointer font-semibold text-xs border border-[#2C1810]/5"
         >
           <LogOut className="w-5 h-5" />
           <span>Se déconnecter de mon compte</span>
-        </button>
+        </button> */}
       </div>
 
       {/* Custom Logout Modal */}

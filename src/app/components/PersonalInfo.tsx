@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, User as UserIcon, Phone, MessageSquare, Loader2 } from "lucide-react";
+import { ChevronLeft, User as UserIcon, Phone, MessageSquare, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "../api/client";
 import { useAuthStore } from "../../store/authStore";
@@ -19,7 +19,8 @@ export function PersonalInfo() {
   // Local Form States
   const [username, setUsername] = useState(user?.username || "");
   const [telephone, setTelephone] = useState(user?.telephone || "");
-  const [whatsapp, setWhatsapp] = useState(user?.telephone || ""); // Fallback placeholder
+  const [whatsapp, setWhatsapp] = useState(user?.whatsapp || ""); // Use actual whatsapp from user if available
+  const [email, setEmail] = useState(user?.email || "");
 
   // Mutation to update user info
   const updateMutation = useMutation({
@@ -28,6 +29,7 @@ export function PersonalInfo() {
         username,
         telephone,
         whatsapp,
+        email,
       });
       return res.data;
     },
@@ -38,6 +40,9 @@ export function PersonalInfo() {
       const updatedUser = {
         id: user?.id || 0,
         username: data.data.username,
+        first_name: data.data.first_name,
+        last_name: data.data.last_name,
+        email: data.data.email,
         role: data.data.role,
         telephone: data.data.telephone,
         is_subscribed: user?.is_subscribed || false,
@@ -74,6 +79,29 @@ export function PersonalInfo() {
 
       <div className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4 max-w-sm mx-auto bg-white rounded-2xl p-6 shadow-sm border border-[#2C1810]/5">
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="block text-[#2C1810]/70 mb-1.5 text-xs font-semibold">Prénom</label>
+              <input
+                type="text"
+                value={user?.first_name || ""}
+                disabled
+                className="w-full px-4 py-3 bg-[#F0EDE8]/50 rounded-xl outline-none text-sm text-[#2C1810]/50 cursor-not-allowed"
+                placeholder="Non renseigné"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-[#2C1810]/70 mb-1.5 text-xs font-semibold">Nom</label>
+              <input
+                type="text"
+                value={user?.last_name || ""}
+                disabled
+                className="w-full px-4 py-3 bg-[#F0EDE8]/50 rounded-xl outline-none text-sm text-[#2C1810]/50 cursor-not-allowed"
+                placeholder="Non renseigné"
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-[#2C1810]/70 mb-1.5 text-xs font-semibold">Nom d'utilisateur / Pseudo</label>
             <div className="relative">
@@ -84,6 +112,19 @@ export function PersonalInfo() {
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-[#F0EDE8] rounded-xl outline-none focus:ring-2 focus:ring-[#C9973A] transition-all text-sm text-[#2C1810]"
                 required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[#2C1810]/70 mb-1.5 text-xs font-semibold">Adresse Email</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#2C1810]/40" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 bg-[#F0EDE8] rounded-xl outline-none focus:ring-2 focus:ring-[#C9973A] transition-all text-sm text-[#2C1810]"
               />
             </div>
           </div>

@@ -4,8 +4,12 @@ import { persist } from 'zustand/middleware';
 export interface User {
   id: number;
   username: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
   role: 'SUPER_ADMIN' | 'MODERATEUR' | 'AGENT' | 'PROPRIETAIRE' | 'CHERCHEUR';
   telephone: string;
+  whatsapp?: string;
   is_subscribed: boolean;
 }
 

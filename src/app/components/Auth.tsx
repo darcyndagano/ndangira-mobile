@@ -36,6 +36,9 @@ export function Auth() {
       const user = {
         id: userProfile.id,
         username: userProfile.username,
+        first_name: userProfile.first_name,
+        last_name: userProfile.last_name,
+        email: userProfile.email,
         role: userProfile.role,
         telephone: userProfile.telephone,
         is_subscribed: userProfile.role === "SUPER_ADMIN" || userProfile.role === "AGENT" || false, // default or backend calculated
