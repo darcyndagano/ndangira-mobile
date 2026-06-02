@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, MapPin, Bed, Sofa, Loader2, Heart } from "lucide-react";
+import { Search as SearchIcon, MapPin, Bed, Sofa, Loader2, Heart, ChevronDown } from "lucide-react";
 import { apiClient } from "../api/client";
 import { useAuthStore } from "../../store/authStore";
 import { useFavoritesStore } from "../../store/favoritesStore";
 import { toast } from "sonner";
 import logo from "../../imports/logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export function Home() {
   const navigate = useNavigate();
@@ -70,16 +76,30 @@ export function Home() {
 
         {/* Small Active Filters Dashboard */}
         <div className="grid grid-cols-3 gap-2 mt-2">
-          <select
-            value={typeBien}
-            onChange={(e) => setTypeBien(e.target.value)}
-            className="px-3 py-2 bg-[#F0EDE8] rounded-xl text-xs text-[#2C1810] outline-none"
-          >
-            <option value="">Type de bien</option>
-            <option value="RESIDENTIEL">Résidentiel</option>
-            <option value="COMMERCIAL">Commercial</option>
-            <option value="PARCELLE">Parcelle</option>
-          </select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center justify-between gap-1 px-3 py-2 bg-[#F0EDE8] rounded-xl text-xs text-[#2C1810] outline-none w-full cursor-pointer">
+                <span className="truncate">
+                  {typeBien === "RESIDENTIEL" ? "Résidentiel" : typeBien === "COMMERCIAL" ? "Commercial" : typeBien === "PARCELLE" ? "Parcelle" : "Type de bien"}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 shrink-0 text-[#2C1810]/40" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-[160px]">
+              <DropdownMenuItem onClick={() => setTypeBien("")} className="cursor-pointer text-xs">
+                Tous
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTypeBien("RESIDENTIEL")} className="cursor-pointer text-xs">
+                Résidentiel
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTypeBien("COMMERCIAL")} className="cursor-pointer text-xs">
+                Commercial
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setTypeBien("PARCELLE")} className="cursor-pointer text-xs">
+                Parcelle
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <input
             type="number"
@@ -89,17 +109,33 @@ export function Home() {
             className="px-3 py-2 bg-[#F0EDE8] rounded-xl text-xs text-[#2C1810] outline-none"
           />
 
-          <select
-            value={chambres}
-            onChange={(e) => setChambres(e.target.value)}
-            className="px-3 py-2 bg-[#F0EDE8] rounded-xl text-xs text-[#2C1810] outline-none"
-          >
-            <option value="">Chambres</option>
-            <option value="1">1 chambre</option>
-            <option value="2">2 chambres</option>
-            <option value="3">3 chambres</option>
-            <option value="4">4+ chambres</option>
-          </select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center justify-between gap-1 px-3 py-2 bg-[#F0EDE8] rounded-xl text-xs text-[#2C1810] outline-none w-full cursor-pointer">
+                <span className="truncate">
+                  {chambres === "1" ? "1 chambre" : chambres === "2" ? "2 chambres" : chambres === "3" ? "3 chambres" : chambres === "4" ? "4+ chambres" : "Chambres"}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 shrink-0 text-[#2C1810]/40" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="min-w-[160px]">
+              <DropdownMenuItem onClick={() => setChambres("")} className="cursor-pointer text-xs">
+                Tous
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setChambres("1")} className="cursor-pointer text-xs">
+                1 chambre
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setChambres("2")} className="cursor-pointer text-xs">
+                2 chambres
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setChambres("3")} className="cursor-pointer text-xs">
+                3 chambres
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setChambres("4")} className="cursor-pointer text-xs">
+                4+ chambres
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { Phone, Lock, User as UserIcon, MessageSquare, Loader2 } from "lucide-react";
+import { ArrowLeft, Phone, Lock, User as UserIcon, MessageSquare, Loader2, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "../api/client";
 import { useAuthStore } from "../../store/authStore";
 import logo from "../../imports/logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export function Auth() {
   const navigate = useNavigate();
@@ -127,7 +133,14 @@ export function Auth() {
 
   if (showOtpScreen) {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-[#FAF8F5] flex flex-col items-center justify-center p-6 text-center relative">
+        <button
+          onClick={() => navigate("/home")}
+          className="absolute top-6 left-6 flex items-center gap-1 text-[#2C1810]/60 hover:text-[#2C1810] transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-xs font-medium">Retour</span>
+        </button>
         <img src={logo} alt="Ndangira" className="w-20 h-20 object-contain mb-6 animate-bounce" />
         <div className="w-full max-w-sm">
           <h2 className="text-[#2C1810] font-bold text-xl mb-2">Activation du compte</h2>
@@ -174,7 +187,14 @@ export function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[#FAF8F5] flex flex-col items-center justify-center p-6 relative">
+      <button
+        onClick={() => navigate("/home")}
+        className="absolute top-6 left-6 flex items-center gap-1 text-[#2C1810]/60 hover:text-[#2C1810] transition-colors cursor-pointer"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="text-xs font-medium">Retour</span>
+      </button>
       <img src={logo} alt="Ndangira" className="w-20 h-20 object-contain mb-8 cursor-pointer" onClick={() => navigate("/home")} />
 
       <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-sm border border-[#2C1810]/5">
@@ -222,14 +242,28 @@ export function Auth() {
 
               <div>
                 <label className="block text-[#2C1810]/70 mb-1.5 text-xs font-semibold">Votre Rôle</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as any)}
-                  className="w-full px-4 py-3 bg-[#F0EDE8] rounded-xl outline-none focus:ring-2 focus:ring-[#C9973A] transition-all text-sm text-[#2C1810]"
-                >
-                  <option value="CHERCHEUR">Chercheur de biens</option>
-                  <option value="PROPRIETAIRE">Propriétaire immobilier</option>
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="w-full flex items-center justify-between px-4 py-3 bg-[#F0EDE8] rounded-xl outline-none focus:ring-2 focus:ring-[#C9973A] transition-all text-sm text-[#2C1810] cursor-pointer">
+                      {role === "CHERCHEUR" ? "Chercheur de biens" : "Propriétaire immobilier"}
+                      <ChevronDown className="w-4 h-4 text-[#2C1810]/40" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[240px]">
+                    <DropdownMenuItem
+                      onClick={() => setRole("CHERCHEUR")}
+                      className="cursor-pointer"
+                    >
+                      Chercheur de biens
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setRole("PROPRIETAIRE")}
+                      className="cursor-pointer"
+                    >
+                      Propriétaire immobilier
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div>
