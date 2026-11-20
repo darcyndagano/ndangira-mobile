@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Heart, MapPin, Bed, Sofa, Loader2 } from "lucide-react";
-import { apiClient } from "../api/client";
+import { fetchAllPages } from "../api/pagination";
 import { useFavoritesStore } from "../../store/favoritesStore";
 import { toast } from "sonner";
 
@@ -10,16 +10,11 @@ export function Favorites() {
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite);
 
-  // Fetch all properties to filter favorites
-  const { data: responseData, isLoading, isError } = useQuery({
-    queryKey: ["annonces"],
-    queryFn: async () => {
-      const res = await apiClient.get("/api/annonces/");
-      return res.data;
-    },
+  // Fetch all properties to filter favorites (toutes les pages)
+  const { data: listings = [], isLoading, isError } = useQuery({
+    queryKey: ["annonces", "all"],
+    queryFn: () => fetchAllPages<any>("/api/annonces/"),
   });
-
-  const listings = responseData?.data?.results || responseData?.data || [];
   const favoriteListings = listings.filter((listing: any) => favoriteIds.includes(listing.id));
 
   const handleToggle = (e: React.MouseEvent, id: number) => {
@@ -71,7 +66,7 @@ export function Favorites() {
 
               <div className="relative">
                 <img
-                  src={listing.medias?.[0]?.image || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"}
+                  src={listing.medias?.[0]?.fichier || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"}
                   alt={listing.titre}
                   className="w-full h-36 object-cover"
                 />

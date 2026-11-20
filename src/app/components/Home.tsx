@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Search as SearchIcon, MapPin, Bed, Sofa, Loader2, Heart, ChevronDown } from "lucide-react";
 import { apiClient } from "../api/client";
 import { useAuthStore } from "../../store/authStore";
@@ -35,11 +35,19 @@ export function Home() {
   const [prixMax, setPrixMax] = useState<string>("");
   const [chambres, setChambres] = useState<string>("");
 
-  // Fetch properties from real API
-  const { data: responseData, isLoading, isError } = useQuery({
+  // Fetch properties from real API (l'API pagine par 15 : on charge page par page)
+  const {
+    data: pagesData,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["annonces", searchQuery, typeBien, prixMin, prixMax, chambres],
-    queryFn: async () => {
-      const params: any = {};
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const params: any = { page: pageParam };
       if (searchQuery) params.search = searchQuery;
       if (typeBien) params.type_bien = typeBien;
       if (prixMin) params.prix_min = prixMin;
@@ -47,11 +55,21 @@ export function Home() {
       if (chambres) params.nb_chambres = chambres;
 
       const res = await apiClient.get("/api/annonces/", { params });
-      return res.data;
+      return res.data?.data ?? res.data;
+    },
+    getNextPageParam: (lastPage: any) => {
+      if (!lastPage?.next) return undefined;
+      try {
+        const page = Number(new URL(lastPage.next).searchParams.get("page"));
+        return Number.isFinite(page) && page > 0 ? page : undefined;
+      } catch {
+        return undefined;
+      }
     },
   });
 
-  const listings = responseData?.data?.results || responseData?.data || [];
+  const listings =
+    pagesData?.pages.flatMap((page: any) => page?.results ?? []) ?? [];
 
   return (
     <div className="min-h-full bg-[#FAF8F5]">
@@ -175,7 +193,7 @@ export function Home() {
 
                   <div className="relative">
                     <img
-                      src={listing.medias?.[0]?.image || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"}
+                      src={listing.medias?.[0]?.fichier || "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"}
                       alt={listing.titre}
                       className="w-full h-36 object-cover"
                     />
@@ -210,6 +228,18 @@ export function Home() {
                 </button>
               );
             })}
+          </div>
+        )}
+
+        {!isLoading && !isError && hasNextPage && (
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage}
+              className="px-6 py-3 rounded-xl bg-[#C9973A] text-white text-sm font-semibold shadow-md hover:bg-[#b0822e] disabled:opacity-60 cursor-pointer"
+            >
+              {isFetchingNextPage ? "Chargement..." : "Charger plus d'annonces"}
+            </button>
           </div>
         )}
       </div>

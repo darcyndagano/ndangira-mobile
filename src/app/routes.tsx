@@ -12,6 +12,11 @@ import { Profile } from "./components/Profile";
 import { AgentReferrals } from "./components/AgentReferrals";
 import { PersonalInfo } from "./components/PersonalInfo";
 import { Settings } from "./components/Settings";
+import { CreateListing } from "./components/CreateListing";
+import { ListingPhotos } from "./components/ListingPhotos";
+import { PendingListings } from "./components/PendingListings";
+import { Subscription } from "./components/Subscription";
+import { AdminCommissions } from "./components/AdminCommissions";
 
 export const router = createBrowserRouter([
   {
@@ -29,9 +34,15 @@ export const router = createBrowserRouter([
       { path: "listing/:id", Component: ListingDetail },
       { path: "auth", Component: Auth },
       { path: "dashboard", Component: OwnerDashboard },
+      { path: "dashboard/new", Component: CreateListing },
+      { path: "dashboard/:id/photos", Component: ListingPhotos },
+      { path: "dashboard/:id/edit", Component: CreateListing },
       { path: "agent", Component: AgentProfile },
       { path: "agent/referrals", Component: AgentReferrals },
+      { path: "agent/annonces", Component: PendingListings },
       { path: "profile/info", Component: PersonalInfo },
+      { path: "subscription", Component: Subscription },
+      { path: "admin/commissions", Component: AdminCommissions },
       { path: "settings", Component: Settings },
     ],
   },

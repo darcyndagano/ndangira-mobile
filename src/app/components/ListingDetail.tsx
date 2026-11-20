@@ -56,9 +56,11 @@ export function ListingDetail() {
   // If the backend has hidden geographic/owner details due to lack of active subscription:
   const isGated = !listing.quartier_detail || !listing.proprietaire_detail;
 
-  const images = listing.medias?.map((m: any) => m.image) || [
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
-  ];
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800";
+  const images: string[] =
+    listing.medias?.map((m: any) => m.fichier).filter(Boolean) ?? [];
+  if (images.length === 0) images.push(fallbackImage);
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] pb-24">
@@ -88,7 +90,7 @@ export function ListingDetail() {
                   Souscrivez à un abonnement pour déverrouiller l'accès complet à tous les biens.
                 </p>
                 <button
-                  onClick={() => navigate("/home/profile")}
+                  onClick={() => navigate("/home/subscription")}
                   className="w-full bg-[#C9973A] text-white py-3 rounded-xl text-sm font-medium shadow-md hover:bg-[#b0822e]"
                 >
                   S'abonner maintenant

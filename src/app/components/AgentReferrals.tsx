@@ -1,21 +1,16 @@
 import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, User as UserIcon, Loader2 } from "lucide-react";
-import { apiClient } from "../api/client";
+import { fetchAllPages } from "../api/pagination";
 
 export function AgentReferrals() {
   const navigate = useNavigate();
 
   // Fetch users created by this agent (the backend get_queryset filters this for agents)
-  const { data: responseData, isLoading, isError } = useQuery({
+  const { data: referrals = [], isLoading, isError } = useQuery({
     queryKey: ["agentReferrals"],
-    queryFn: async () => {
-      const res = await apiClient.get("/api/users/");
-      return res.data;
-    },
+    queryFn: () => fetchAllPages<any>("/api/users/"),
   });
-
-  const referrals = responseData?.data?.results || responseData?.data || [];
 
   return (
     <div className="min-h-screen bg-[#FAF8F5]">

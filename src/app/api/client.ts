@@ -5,9 +5,9 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
 export const apiClient = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  // Ne pas figer Content-Type ici : axios le déduit automatiquement
+  // (application/json pour un objet, multipart/form-data avec boundary
+  // pour un FormData). Le figer casserait l'upload des photos.
 });
 
 // Request Interceptor: Inject Auth Token
@@ -45,7 +45,7 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     // Avoid infinite loop if refresh request itself fails
-    if (originalRequest.url?.includes('/api/token/refresh/')) {
+    if (originalRequest.url?.includes('/api/auth/token/refresh/')) {
       useAuthStore.getState().logout();
       return Promise.reject(error);
     }
@@ -77,20 +77,24 @@ apiClient.interceptors.response.use(
       }
 
       try {
-        const response = await axios.post(`${API_URL}/api/token/refresh/`, {
+        const response = await axios.post(`${API_URL}/api/auth/token/refresh/`, {
           refresh: refreshToken,
         });
 
-        const newAccessToken = response.data.access;
+        // L'API enveloppe toutes ses réponses dans { success, data, message }.
+        const payload = response.data?.data ?? response.data;
+        const newAccessToken = payload?.access;
 
-        // Update Zustand Store
-        const currentUser = useAuthStore.getState().user;
-        if (currentUser) {
-          useAuthStore.getState().login(
-            { access: newAccessToken, refresh: refreshToken },
-            currentUser
-          );
+        if (!newAccessToken) {
+          throw new Error("Réponse de rafraîchissement invalide.");
         }
+
+        // ROTATE_REFRESH_TOKENS=True : le backend renvoie aussi un nouveau refresh.
+        const newRefreshToken = payload?.refresh ?? refreshToken;
+        useAuthStore.getState().setTokens({
+          access: newAccessToken,
+          refresh: newRefreshToken,
+        });
 
         processQueue(null, newAccessToken);
         if (originalRequest.headers) {

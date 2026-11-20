@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { User as UserIcon, Home, TrendingUp, Settings, LogOut, Users } from "lucide-react";
+import { User as UserIcon, Home, TrendingUp, Settings, LogOut, Users, ClipboardCheck, CreditCard, Wallet } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
 
@@ -20,6 +20,9 @@ export function Profile() {
   const menuItems = [
     { icon: UserIcon, label: "Informations personnelles", path: "/home/profile/info" },
     { icon: Home, label: "Mes annonces", path: "/home/dashboard", roles: ["SUPER_ADMIN", "MODERATEUR", "PROPRIETAIRE"] },
+    { icon: CreditCard, label: "Mon abonnement", path: "/home/subscription", roles: ["PROPRIETAIRE", "CHERCHEUR"] },
+    { icon: Wallet, label: "Gestion des commissions", path: "/home/admin/commissions", roles: ["SUPER_ADMIN"] },
+    { icon: ClipboardCheck, label: "Annonces à valider", path: "/home/agent/annonces", roles: ["AGENT"] },
     { icon: TrendingUp, label: "Commissions (Agent)", path: "/home/agent", roles: ["SUPER_ADMIN", "AGENT"] },
     { icon: Users, label: "Mes filleuls (Agent)", path: "/home/agent/referrals", roles: ["SUPER_ADMIN", "AGENT"] },
     { icon: Settings, label: "Paramètres", path: "/home/settings" },

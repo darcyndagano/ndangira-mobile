@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, Wallet, TrendingUp, Users, Loader2 } from "lucide-react";
 import { apiClient } from "../api/client";
+import { fetchAllPages } from "../api/pagination";
 
 export function AgentProfile() {
   const navigate = useNavigate();
@@ -15,17 +16,13 @@ export function AgentProfile() {
     },
   });
 
-  // Fetch Commissions History
-  const { data: commissionsResponse, isLoading: isHistoryLoading, isError } = useQuery({
+  // Fetch Commissions History (toutes les pages)
+  const { data: commissions = [], isLoading: isHistoryLoading, isError } = useQuery({
     queryKey: ["agentCommissions"],
-    queryFn: async () => {
-      const res = await apiClient.get("/api/commissions/me/");
-      return res.data;
-    },
+    queryFn: () => fetchAllPages<any>("/api/commissions/me/"),
   });
 
   const summary = summaryResponse?.data || { total_cumule: 0, total_paye: 0, total_en_attente: 0 };
-  const commissions = commissionsResponse?.data?.results || commissionsResponse?.data || [];
 
   const isLoading = isSummaryLoading || isHistoryLoading;
 

@@ -31,14 +31,25 @@ export function Auth() {
   // Helper: Load User Profile & Login in Zustand
   const handleAuthSuccess = async (tokens: { access: string; refresh: string }) => {
     try {
-      // Injects access token temporarily to fetch user profile
-      const userRes = await apiClient.get("/api/users/me/", {
-        headers: { Authorization: `Bearer ${tokens.access}` },
+      // Place les jetons tout de suite : les requêtes suivantes passent par
+      // l'intercepteur d'authentification avec le bon access token.
+      useAuthStore.getState().setTokens({
+        access: tokens.access,
+        refresh: tokens.refresh,
       });
-      
+
+      const userRes = await apiClient.get("/api/users/me/");
       const userProfile = userRes.data?.data;
-      
-      // Determine if user has active subscription (you can mock this or query check)
+
+      // Statut réel d'abonnement (404 = aucun abonnement actif).
+      let isSubscribed = ["SUPER_ADMIN", "AGENT"].includes(userProfile.role);
+      try {
+        const subscriptionRes = await apiClient.get("/api/subscriptions/me/");
+        isSubscribed = subscriptionRes.data?.data?.est_actif ?? true;
+      } catch {
+        isSubscribed = ["SUPER_ADMIN", "AGENT"].includes(userProfile.role);
+      }
+
       const user = {
         id: userProfile.id,
         username: userProfile.username,
@@ -47,13 +58,14 @@ export function Auth() {
         email: userProfile.email,
         role: userProfile.role,
         telephone: userProfile.telephone,
-        is_subscribed: userProfile.role === "SUPER_ADMIN" || userProfile.role === "AGENT" || false, // default or backend calculated
+        is_subscribed: isSubscribed,
       };
 
       loginStore(tokens, user);
       toast.success("Authentification réussie !");
       navigate("/home");
     } catch (err: any) {
+      useAuthStore.getState().logout();
       toast.error("Impossible de récupérer les détails du profil.");
     }
   };
