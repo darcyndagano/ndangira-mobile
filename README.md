@@ -5,7 +5,9 @@
 
   ## Running the code
 
-  Run `npm i` to install the dependencies.
+  This project uses pnpm, pinned by the `packageManager` field of `package.json`. With Node 24, run `corepack enable` once.
 
-  Run `npm run dev` to start the development server.
+  Run `pnpm install` to install the dependencies.
+
+  Run `pnpm dev` to start the development server, and `pnpm build` to build the app.
   
