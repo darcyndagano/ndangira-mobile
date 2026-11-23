@@ -21,8 +21,4 @@ Client mobile de Ndangira : React 18 + Vite 6 + Tailwind 4/shadcn, react-query, 
 - `VITE_API_URL` is baked into `dist/` at build time: for a phone, build with `VITE_API_URL=http://<PC LAN IP>:8000`, then `npx cap sync android`; `localhost` on the device is the phone itself.
 - Keep the `react()` and `tailwindcss()` plugins in `vite.config.ts` (Figma Make requirement).
 
-## Known pitfalls
-
-- The root `.gitignore` ignores `app`, `gradle`, `*.gradle` names at any depth: new files under `android/` are silently untracked — check `git status --ignored android/` after adding native files.
-
 <!-- /bmad:context -->
