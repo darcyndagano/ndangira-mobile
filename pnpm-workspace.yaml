@@ -1,6 +1,10 @@
 packages:
   - '.'
 allowBuilds:
+  # esbuild and @tailwindcss/oxide get their binaries from prebuilt optional packages: no install script needed.
   '@tailwindcss/oxide': false
   esbuild: false
-  sharp: false
+  # sharp@0.32.6 (pulled in by @capacitor/assets) needs its install script to fetch its native binary.
+  sharp: true
+overrides:
+  vite: 6.3.5
